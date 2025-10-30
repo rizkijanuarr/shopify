@@ -1,0 +1,266 @@
+<div class="cart-page">
+    <div class="cart-container">
+        <h1 class="cart-title">Shopping Cart</h1>
+        
+        {% if cart.item_count > 0 %}
+            <div class="cart-items">
+                {% for item in cart.items %}
+                    <div class="cart-item">
+                        <div class="item-image">
+                            <img src="{{ item.image | img_url: '150x150' }}" alt="{{ item.title }}">
+                        </div>
+                        
+                        <div class="item-details">
+                            <h3 class="item-title">{{ item.product.title }}</h3>
+                            {% unless item.variant.title == 'Default Title' %}
+                                <p class="item-variant">{{ item.variant.title }}</p>
+                            {% endunless %}
+                            <p class="item-price">{{ item.price | money }}</p>
+                        </div>
+                        
+                        <div class="item-quantity">
+                            <label for="quantity-{{ item.key }}">Qty:</label>
+                            <input type="number" 
+                                         id="quantity-{{ item.key }}" 
+                                         name="updates[{{ item.key }}]" 
+                                         value="{{ item.quantity }}" 
+                                         min="0" 
+                                         class="quantity-input">
+                        </div>
+                        
+                        <div class="item-total">
+                            <p class="line-total">{{ item.line_price | money }}</p>
+                            <a href="/cart/change?line={{ forloop.index }}&quantity=0" class="remove-item">Remove</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div class="cart-summary">
+                <div class="cart-totals">
+                    <div class="subtotal">
+                        <span>Subtotal ({{ cart.item_count }} items):</span>
+                        <span class="total-price">{{ cart.total_price | money }}</span>
+                    </div>
+                </div>
+                
+                <div class="cart-actions">
+                    <a href="/checkout" class="checkout-btn">Proceed to Checkout</a>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-cart">
+                <h2>Your cart is empty</h2>
+                <p>Add some products to get started!</p>
+                <a href="/collections/all" class="continue-shopping">Continue Shopping</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<form action="/cart" method="post" novalidate>
+    <!-- This form wraps the cart for quantity updates -->
+</form>
+
+<style>
+.cart-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.cart-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 30px;
+}
+
+.cart-title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 2.5rem;
+    font-weight: 300;
+}
+
+.cart-items {
+    margin-bottom: 30px;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border: 2px solid #808080;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    gap: 20px;
+}
+
+.item-image img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.item-details {
+    flex: 1;
+}
+
+.item-title {
+    margin: 0 0 5px 0;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.item-variant {
+    margin: 0 0 5px 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.item-price {
+    margin: 0;
+    font-weight: bold;
+    color: #2c5aa0;
+}
+
+.item-quantity {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.quantity-input {
+    width: 60px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.item-total {
+    text-align: right;
+    min-width: 120px;
+}
+
+.line-total {
+    margin: 0 0 10px 0;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.remove-item {
+    color: #e74c3c;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.remove-item:hover {
+    text-decoration: underline;
+}
+
+.cart-summary {
+    border-top: 2px solid #eee;
+    padding-top: 20px;
+}
+
+.cart-totals {
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+.subtotal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.total-price {
+    color: #2c5aa0;
+    font-size: 1.5rem;
+}
+
+.cart-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.checkout-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: #27ae60;
+    color: white;
+    font-weight: bold;
+}
+
+.checkout-btn:hover {
+    background: #229954;
+    transform: translateY(-1px);
+}
+
+.empty-cart {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.empty-cart h2 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.empty-cart p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.continue-shopping {
+    display: inline-block;
+    padding: 12px 24px;
+    background: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.continue-shopping:hover {
+    background: #2980b9;
+}
+
+@media (max-width: 768px) {
+    .cart-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .item-details {
+        order: -1;
+    }
+    
+    .cart-actions {
+        flex-direction: column;
+    }
+    
+    .subtotal {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+</style>
