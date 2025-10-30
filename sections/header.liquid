@@ -1,0 +1,229 @@
+<!-- Header Section -->
+<header class="site-header">
+  <div class="container">
+    <!-- Left Logo -->
+    <div class="brand-logo">
+      <a href="{{ routes.root_url }}" class="logo-link">
+        {% if shop.brand.logo %}
+          <img src="{{ shop.brand.logo | image_url: width: 200 }}" alt="{{ shop.name }}" class="logo-image">
+        {% else %}
+          <span class="logo-text">{{ shop.name }}</span>
+        {% endif %}
+      </a>
+    </div>
+
+    <!-- Center Navigation -->
+    <nav class="main-nav">
+      <ul>
+        {% for link in linklists['main-menu-1'].links %}
+          <li>
+            <a href="{{ link.url }}">{{ link.title }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+
+    <!-- Right Icons -->
+    <div class="header-icons">
+      <!-- Account Icon -->
+      <a href="/account" title="Account" class="icon-link">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="7" r="4"></circle>
+          <path d="M5.5 21a8.38 8.38 0 0 1 13 0"></path>
+        </svg>
+      </a>
+
+      <!-- Cart Icon -->
+      <a href="/cart" title="Cart" class="icon-link cart-icon">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+        <span class="cart-count">{{ cart.item_count }}</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<style>
+/* Header Wrapper */
+.site-header {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  z-index: 100;
+  padding: 15px 0;
+}
+
+/* Container sudah didefinisikan di theme.css, jadi tidak perlu diduplikasi */
+
+/* Logo */
+.brand-logo {
+  flex: 1;
+}
+
+.brand-logo .logo-link {
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: #111;
+  letter-spacing: 1px;
+  display: inline-block;
+}
+
+.logo-image {
+  max-height: 40px;
+  width: auto;
+}
+
+.logo-text {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #111;
+  letter-spacing: 1px;
+}
+
+/* Navigation */
+.main-nav {
+  flex: 2;
+  display: flex;
+  justify-content: center;
+}
+
+.main-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 40px;
+  margin: 0;
+  padding: 0;
+}
+
+.main-nav li {
+  display: flex;
+  align-items: center;
+}
+
+.main-nav a {
+  text-decoration: none;
+  color: #222;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+  padding: 5px 0;
+}
+
+.main-nav a:hover {
+  color: #e63946;
+}
+
+/* Icons */
+.header-icons {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
+}
+
+.icon-link {
+  font-size: 1.2rem;
+  color: #222;
+  position: relative;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.icon-link:hover {
+  color: #e63946;
+}
+
+.cart-icon {
+  position: relative;
+}
+
+.cart-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #e63946;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  min-width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  line-height: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .site-header {
+    padding: 10px 0;
+  }
+  
+  .container {
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+  }
+  
+  .brand-logo,
+  .main-nav,
+  .header-icons {
+    flex: none;
+  }
+  
+  .main-nav ul {
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .header-icons {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-nav ul {
+    gap: 15px;
+  }
+  
+  .main-nav a {
+    font-size: 0.9rem;
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Header",
+  "tag": "header",
+  "settings": []
+}
+{% endschema %}

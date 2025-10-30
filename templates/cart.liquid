@@ -1,266 +1,390 @@
-<div class="cart-page">
-    <div class="cart-container">
-        <h1 class="cart-title">Shopping Cart</h1>
-        
-        {% if cart.item_count > 0 %}
-            <div class="cart-items">
-                {% for item in cart.items %}
-                    <div class="cart-item">
-                        <div class="item-image">
-                            <img src="{{ item.image | img_url: '150x150' }}" alt="{{ item.title }}">
-                        </div>
-                        
-                        <div class="item-details">
-                            <h3 class="item-title">{{ item.product.title }}</h3>
-                            {% unless item.variant.title == 'Default Title' %}
-                                <p class="item-variant">{{ item.variant.title }}</p>
-                            {% endunless %}
-                            <p class="item-price">{{ item.price | money }}</p>
-                        </div>
-                        
-                        <div class="item-quantity">
-                            <label for="quantity-{{ item.key }}">Qty:</label>
-                            <input type="number" 
-                                         id="quantity-{{ item.key }}" 
-                                         name="updates[{{ item.key }}]" 
-                                         value="{{ item.quantity }}" 
-                                         min="0" 
-                                         class="quantity-input">
-                        </div>
-                        
-                        <div class="item-total">
-                            <p class="line-total">{{ item.line_price | money }}</p>
-                            <a href="/cart/change?line={{ forloop.index }}&quantity=0" class="remove-item">Remove</a>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-            
-            <div class="cart-summary">
-                <div class="cart-totals">
-                    <div class="subtotal">
-                        <span>Subtotal ({{ cart.item_count }} items):</span>
-                        <span class="total-price">{{ cart.total_price | money }}</span>
-                    </div>
-                </div>
-                
-                <div class="cart-actions">
-                    <a href="/checkout" class="checkout-btn">Proceed to Checkout</a>
-                </div>
-            </div>
-        {% else %}
-            <div class="empty-cart">
-                <h2>Your cart is empty</h2>
-                <p>Add some products to get started!</p>
-                <a href="/collections/all" class="continue-shopping">Continue Shopping</a>
-            </div>
-        {% endif %}
-    </div>
-</div>
-
-<form action="/cart" method="post" novalidate>
-    <!-- This form wraps the cart for quantity updates -->
-</form>
-
 <style>
-.cart-page {
+.cart-section {
+    padding: 80px 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+    position: relative;
+}
+.cart-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, #e5e5e5 50%, transparent 100%);
+}
+.section-header {
+    text-align: center;
+    margin-bottom: 60px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.cart-title {
+    font-size: 2.8rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #1a1a1a;
+    margin: 0 0 16px 0;
+    position: relative;
+}
+.cart-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #e63946, #ff6b7a);
+    border-radius: 2px;
+}
+.cart-subtitle {
+    font-size: 1.1rem;
+    color: #666;
+    margin: 0;
+    font-weight: 400;
+    line-height: 1.6;
+}
+.container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
+    padding: 0 24px;
 }
-
-.cart-container {
+.cart-content-card {
     background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    padding: 30px;
-}
+    border-radius: 16px;
+    width: 100%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    padding: 24px;
 
-.cart-title {
-    text-align: center;
-    margin-bottom: 30px;
-    color: #333;
-    font-size: 2.5rem;
-    font-weight: 300;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-.cart-items {
-    margin-bottom: 30px;
+.cart-content-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
 }
-
-.cart-item {
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 24px;
+}
+th, td {
+    padding: 14px 16px;
+    text-align: left;
+}
+th {
+    background: #f9fafb;
+    font-weight: 600;
+    color: #374151;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 0.95rem;
+}
+td {
+    font-size: 0.95rem;
+    color: #374151;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: middle;
+}
+.cart-product {
     display: flex;
     align-items: center;
-    padding: 20px;
-    border: 2px solid #808080;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    gap: 20px;
+    gap: 14px;
 }
-
-.item-image img {
-    width: 100px;
-    height: 100px;
+.cart-product-img {
+    width: 56px;
+    height: 56px;
     object-fit: cover;
-    border-radius: 4px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
 }
-
-.item-details {
-    flex: 1;
+.cart-variant {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-top: 2px;
 }
-
-.item-title {
-    margin: 0 0 5px 0;
-    font-size: 1.2rem;
-    color: #333;
-}
-
-.item-variant {
-    margin: 0 0 5px 0;
-    color: #666;
-    font-size: 0.9rem;
-}
-
-.item-price {
-    margin: 0;
-    font-weight: bold;
-    color: #2c5aa0;
-}
-
-.item-quantity {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-}
-
-.quantity-input {
-    width: 60px;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+input[type="number"] {
+    width: 64px;
+    padding: 6px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #f9fafb;
+    font-size: 0.95rem;
     text-align: center;
+    transition: border 0.2s, box-shadow 0.2s;
 }
-
-.item-total {
-    text-align: right;
-    min-width: 120px;
+input[type="number"]:focus {
+    border-color: #e63946;
+    box-shadow: 0 0 0 3px rgba(230,57,70,0.15);
+    outline: none;
+    background: #fff;
 }
-
-.line-total {
-    margin: 0 0 10px 0;
-    font-weight: bold;
-    font-size: 1.1rem;
-    color: #333;
-}
-
-.remove-item {
-    color: #e74c3c;
-    text-decoration: none;
+.cart-remove-btn {
+    background: transparent;
+    color: #e63946;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
     font-size: 0.9rem;
+    transition: color 0.25s;
 }
-
-.remove-item:hover {
-    text-decoration: underline;
+.cart-remove-btn:hover {
+    color: #b91c1c;
 }
-
-.cart-summary {
-    border-top: 2px solid #eee;
-    padding-top: 20px;
-}
-
-.cart-totals {
-    text-align: right;
-    margin-bottom: 20px;
-}
-
-.subtotal {
+.cart-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: #333;
+    margin-top: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
 }
-
-.total-price {
-    color: #2c5aa0;
-    font-size: 1.5rem;
+.cart-footer-left a {
+    color: #374151;
+    font-size: 0.9rem;
+    text-decoration: none;
 }
-
-.cart-actions {
-    display: flex;
-    justify-content: flex-end;
+.cart-footer-left a:hover {
+    text-decoration: underline;
 }
-
-.checkout-btn {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 4px;
+.cart-footer-right {
+    text-align: right;
+}
+.subtotal {
     font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+.btn {
+    display: inline-block;
+    padding: 0.6em 1.4em;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.95rem;
     cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    text-align: center;
-    transition: all 0.3s ease;
-    background: #27ae60;
-    color: white;
-    font-weight: bold;
+    border: none;
+    transition: all 0.25s ease;
 }
-
-.checkout-btn:hover {
-    background: #229954;
-    transform: translateY(-1px);
+.btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+    margin-right: 8px;
 }
-
-.empty-cart {
-    text-align: center;
-    padding: 50px 20px;
+.btn-secondary:hover {
+    background: #e5e7eb;
 }
-
-.empty-cart h2 {
-    color: #333;
-    margin-bottom: 10px;
+.btn-primary {
+    background: #e63946;
+    color: #fff;
 }
-
-.empty-cart p {
-    color: #666;
-    margin-bottom: 20px;
+.btn-primary:hover {
+    background: #ff6b7a;
 }
-
-.continue-shopping {
-    display: inline-block;
-    padding: 12px 24px;
-    background: #3498db;
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: background 0.3s ease;
+@media (max-width: 1024px) {
+    .cart-section {
+        padding: 60px 0;
+    }
+    .cart-title {
+        font-size: 2.4rem;
+    }
+    .cart-content-card {
+        padding: 32px;
+    }
 }
-
-.continue-shopping:hover {
-    background: #2980b9;
-}
-
 @media (max-width: 768px) {
-    .cart-item {
-        flex-direction: column;
-        text-align: center;
-        gap: 15px;
+    .cart-section {
+        padding: 50px 0;
     }
-    
-    .item-details {
-        order: -1;
+    .section-header {
+        margin-bottom: 40px;
     }
-    
-    .cart-actions {
-        flex-direction: column;
+    .cart-title {
+        font-size: 2rem;
     }
-    
-    .subtotal {
+    .cart-subtitle {
+        font-size: 1rem;
+    }
+    .cart-content-card {
+        padding: 20px;
+    }
+}
+@media (max-width: 640px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    thead {
+        display: none;
+    }
+    tr {
+        margin-bottom: 16px;
+        border: 1px solid #f3f4f6;
+        border-radius: 10px;
+        padding: 12px;
+        background: #fff;
+    }
+    td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: none !important;
+        padding: 8px 6px;
+    }
+    td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #6b7280;
+        flex: 1;
+        margin-right: 8px;
+        font-size: 0.85rem;
+    }
+    .cart-footer {
         flex-direction: column;
-        gap: 10px;
+        align-items: flex-start;
+    }
+    .cart-footer-right {
+        text-align: left;
+    }
+}
+@media (max-width: 480px) {
+    .cart-section {
+        padding: 40px 0;
+    }
+    .cart-title {
+        font-size: 1.8rem;
+    }
+    .cart-content-card {
+        padding: 12px;
+    }
+}
+@media (prefers-reduced-motion: no-preference) {
+    .cart-content-card {
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 0.6s ease forwards;
+    }
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 }
 </style>
+
+
+<section class="cart-section">
+    <div class="section-header">
+        <h2 class="cart-title">Your Cart</h2>
+        <p class="cart-subtitle">Review your selected products before checkout</p>
+    </div>
+    <div class="container">
+        <div class="cart-content-card">
+            <form action="/cart" method="post" id="cart-form">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart.items %}
+                        <tr data-line="{{ forloop.index }}">
+                            <td data-label="Product">
+                                <div class="cart-product">
+                                    {% if item.image %}
+                                        <img src="{{ item.image | img_url: 'small' }}" alt="{{ item.product.title }}" class="cart-product-img">
+                                    {% endif %}
+                                    <div>
+                                        <strong>{{ item.product.title }}</strong>
+                                        {% if item.variant.title != 'Default Title' %}
+                                            <div class="cart-variant">{{ item.variant.title }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td data-label="Price" class="price" data-price="{{ item.price }}">{{ item.price | money }}</td>
+                            <td data-label="Quantity">
+                                <input 
+                                    type="number" 
+                                    name="updates[]" 
+                                    value="{{ item.quantity }}" 
+                                    min="0" 
+                                    data-line="{{ forloop.index }}" 
+                                    class="qty-input">
+                            </td>
+                            <td data-label="Total" class="line-total">{{ item.line_price | money }}</td>
+                            <td>
+                                <button 
+                                    type="submit" 
+                                    name="updates[]" 
+                                    value="0" 
+                                    formaction="/cart/change?line={{ forloop.index }}&quantity=0" 
+                                    formmethod="post" 
+                                    class="cart-remove-btn">
+                                    Remove
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="cart-footer">
+                    <div class="cart-footer-left">
+                        <a href="{{ cart.items[0].product.url }}">← Back to Product</a>
+                    </div>
+                    <div class="cart-footer-right">
+                        <div class="subtotal">Subtotal: <span id="cart-subtotal">{{ cart.total_price | money }}</span></div>
+                        <button class="btn btn-primary" type="submit" formaction="/checkout" formmethod="post">Checkout</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const inputs = document.querySelectorAll(".qty-input");
+
+    function formatMoney(cents) {
+        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(cents / 100);
+    }
+
+    function updateTotals() {
+        let subtotal = 0;
+        document.querySelectorAll("tbody tr").forEach(row => {
+            const price = parseInt(row.querySelector(".price").dataset.price, 10);
+            const qty = parseInt(row.querySelector(".qty-input").value, 10) || 0;
+            const lineTotal = price * qty;
+            row.querySelector(".line-total").textContent = formatMoney(lineTotal);
+            subtotal += lineTotal;
+        });
+        document.getElementById("cart-subtotal").textContent = formatMoney(subtotal);
+    }
+
+    // Auto update ke Shopify via fetch API
+    inputs.forEach(input => {
+        input.addEventListener("change", function() {
+            const line = this.dataset.line;
+            const quantity = this.value;
+
+            fetch(`/cart/change.js`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ line: line, quantity: quantity })
+            })
+            .then(res => res.json())
+            .then(data => {
+                updateTotals(); // update tampilan
+            });
+        });
+    });
+
+    updateTotals();
+});
+</script>
